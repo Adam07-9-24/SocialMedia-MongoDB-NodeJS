@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= mode === "edit" ? "Editar publicación" : "Nueva publicación" %> | Social Media</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="app-nav"><div class="nav-wrapper container"><a href="/" class="brand-logo">Social Media</a></div></nav>
+  <main class="container form-page">
+    <section class="form-shell">
+      <a class="back-link" href="/posts"><i class="material-icons">arrow_back</i> Volver a publicaciones</a>
+      <div class="form-heading"><span class="eyebrow"><%= mode === "edit" ? "ACTUALIZA TU CONTENIDO" : "NUEVA IDEA" %></span><h1><%= mode === "edit" ? "Editar publicación" : "Crear publicación" %></h1><p><%= mode === "edit" ? "Haz los cambios que necesites y guarda la nueva versión." : "Completa los datos para compartir una nueva publicación." %></p></div>
+      <% if (error) { %><div class="app-alert"><i class="material-icons">error_outline</i><%= error %></div><% } %>
+      <% const hashtagValue = Array.isArray(post.hashtags) ? post.hashtags.join(", ") : (post.hashtags || ""); %>
+      <form action="<%= mode === "edit" ? `/posts/${post._id}/edit` : "/posts" %>" method="POST" class="post-form">
+        <% if (mode === "create") { %>
+          <div class="input-field"><select name="userId" required><option value="" disabled <%= !post.userId ? "selected" : "" %>>Selecciona un usuario</option><% users.forEach((user) => { %><option value="<%= user._id %>" <%= String(post.userId) === String(user._id) ? "selected" : "" %>><%= `${user.name || ""} ${user.lastName || ""}`.trim() || "Usuario sin nombre" %> - <%= user.email || "Sin correo" %></option><% }) %></select><label>Usuario *</label></div>
+        <% } else { %>
+          <div class="associated-user"><i class="material-icons">person</i><span>Publicación asociada a</span><strong><%= post.user ? `${post.user.name || ""} ${post.user.lastName || ""}`.trim() || "Usuario sin nombre" : "Usuario no disponible" %></strong></div>
+        <% } %>
+        <div class="input-field"><input id="title" name="title" type="text" value="<%= post.title || "" %>" required minlength="5" maxlength="30"><label for="title" class="active">Título *</label><span class="helper-text">Entre 5 y 30 caracteres.</span></div>
+        <div class="input-field"><textarea id="content" name="content" class="materialize-textarea" required minlength="10"><%= post.content || "" %></textarea><label for="content" class="active">Contenido *</label><span class="helper-text">Mínimo 10 caracteres.</span></div>
+        <div class="input-field"><input id="hashtags" name="hashtags" type="text" value="<%= hashtagValue %>"><label for="hashtags" class="active">Hashtags</label><span class="helper-text">Sepáralos con comas: nodejs,mongodb,web</span></div>
+        <div class="input-field"><input id="imageUrl" name="imageUrl" type="url" value="<%= post.imageUrl || "" %>"><label for="imageUrl" class="active">Imagen URL</label></div>
+        <div class="form-actions"><a href="/posts" class="btn-flat btn-secondary">Cancelar</a><button type="submit" class="btn btn-primary waves-effect waves-light"><i class="material-icons left">save</i>Guardar publicación</button></div>
+      </form>
+    </section>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", () => M.FormSelect.init(document.querySelectorAll("select")));</script>
+</body>
+</html>

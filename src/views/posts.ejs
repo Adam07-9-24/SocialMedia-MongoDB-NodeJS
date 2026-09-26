@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publicaciones | Social Media</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="/css/styles.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="app-nav"><div class="nav-wrapper container"><a href="/" class="brand-logo">Social Media</a></div></nav>
+  <main class="container page-content">
+    <header class="page-header">
+      <div><span class="eyebrow">COMUNIDAD</span><h1>Publicaciones</h1><p>Explora y administra el contenido compartido.</p></div>
+      <div class="header-actions"><a href="/" class="btn-flat btn-secondary"><i class="material-icons left">home</i>Inicio</a><a href="/posts/new" class="btn btn-primary"><i class="material-icons left">add</i>Nueva publicación</a></div>
+    </header>
+
+    <% if (typeof error !== "undefined" && error) { %><div class="app-alert"><i class="material-icons">error_outline</i><%= error %></div><% } %>
+
+    <% if (posts && posts.length > 0) { %>
+      <div class="row post-grid">
+        <% posts.forEach((post) => { %>
+          <div class="col s12 m6 l4">
+            <article class="post-card">
+              <% if (post.imageUrl) { %><div class="post-image"><img src="<%= post.imageUrl %>" alt="Imagen de <%= post.title %>"></div><% } %>
+              <div class="post-body">
+                <div class="post-meta"><i class="material-icons tiny">calendar_today</i><%= post.createdAt ? new Date(post.createdAt).toLocaleDateString("es-PE") : "Sin fecha" %></div>
+                <h2><%= post.title %></h2><p class="post-content"><%= post.content %></p>
+                <% if (post.hashtags && post.hashtags.length > 0) { %><div class="chips"><% post.hashtags.forEach((hashtag) => { %><span class="chip">#<%= hashtag %></span><% }) %></div><% } %>
+              </div>
+              <footer class="post-footer">
+                <div class="author"><div class="avatar"><i class="material-icons">person</i></div><span><small>Autor</small><strong><%= post.user ? `${post.user.name || ""} ${post.user.lastName || ""}`.trim() || "Usuario sin nombre" : "Usuario no disponible" %></strong></span></div>
+                <div class="post-actions"><a href="/posts/<%= post._id %>/edit" class="icon-action edit" aria-label="Editar publicación"><i class="material-icons">edit</i></a><form action="/posts/<%= post._id %>/delete" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta publicación?')"><button class="icon-action delete" type="submit" aria-label="Eliminar publicación"><i class="material-icons">delete</i></button></form></div>
+              </footer>
+            </article>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <section class="empty-state"><div class="empty-icon"><i class="material-icons">article</i></div><h2>No hay publicaciones todavía.</h2><p>Comienza compartiendo una idea con la comunidad.</p><a href="/posts/new" class="btn btn-primary"><i class="material-icons left">add</i>Crear primera publicación</a></section>
+    <% } %>
+  </main>
+</body>
+</html>
